@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>🏆 Ranking — Palpites Copa 2026</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0f1e36;
+  --card:#1a2f4e;
+  --text:#fff;
+  --text-muted:#8899aa;
+  --accent:#2ecc71;
+  --gold:#ffd700;
+  --silver:#c0c0c0;
+  --bronze:#cd7f32;
+  --radius:8px;
+  --font:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif
+}
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--text);
+  font-size:14px;
+  padding:16px;
+  padding-bottom:40px
+}
+h1{font-size:22px;margin-bottom:4px}
+.sub{color:var(--text-muted);font-size:13px;margin-bottom:20px}
+.empty{text-align:center;padding:40px 16px;color:var(--text-muted)}
+.empty .icon{font-size:48px;margin-bottom:12px}
+.spinner{width:32px;height:32px;border:3px solid rgba(255,255,255,.1);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:40px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.filtros{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.filtros button{
+  padding:6px 14px;border-radius:6px;border:1px solid rgba(255,255,255,.15);
+  background:transparent;color:var(--text-muted);font-size:12px;font-weight:600;
+  cursor:pointer;font-family:var(--font);transition:all .2s
+}
+.filtros button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:16px}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;min-width:500px}
+th{
+  position:sticky;top:0;background:#162d50;z-index:2;
+  padding:8px 6px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px;
+  color:var(--text-muted);font-weight:700;white-space:nowrap;
+  border-bottom:1px solid rgba(255,255,255,.1)
+}
+th:first-child{background:#0f1e36;min-width:100px;position:sticky;left:0;z-index:3}
+td{
+  padding:6px;border-bottom:1px solid rgba(255,255,255,.05);
+  white-space:nowrap;vertical-align:middle
+}
+td:first-child{font-weight:600;position:sticky;left:0;background:var(--bg);z-index:1}
+tr:hover td{background:rgba(255,255,255,.03)}
+tr:hover td:first-child{background:#1a2f4e}
+
+.flag-img{width:14px;height:10px;border-radius:1px;vertical-align:middle;margin-right:3px}
+.pos{font-size:9px;font-weight:700;margin-right:2px}
+.pos1{color:var(--gold)}
+.pos2{color:var(--silver)}
+.pos3{color:var(--bronze)}
+
+.fase-label{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600}
+.fase-grupos{background:rgba(46,204,113,.15);color:var(--accent)}
+.fase-mata{background:rgba(255,215,0,.15);color:var(--gold)}
+
+.erro{
+  text-align:center;padding:40px;color:var(--text-muted)
+}
+.erro button{
+  margin-top:12px;padding:10px 20px;border:none;border-radius:8px;
+  background:var(--accent);color:#fff;font-size:14px;font-weight:600;
+  cursor:pointer;font-family:var(--font)
+}
+</style>
+</head>
+<body>
+
+<h1>🏆 Ranking de Palpites</h1>
+<div class="sub">Copa do Mundo 2026 — Compare os palpites do grupo</div>
+
+<div class="filtros" id="filtros">
+  <button class="active" data-filtro="todas" onclick="filtrar('todas')">Todas as fases</button>
+  <button data-filtro="grupos" onclick="filtrar('grupos')">Fase de Grupos</button>
+  <button data-filtro="mata-mata" onclick="filtrar('mata-mata')">Mata-mata</button>
+</div>
+
+<div id="content">
+  <div class="spinner"></div>
+</div>
+
+<script>
+// ============================================================
+// CONFIG
+// ============================================================
+const API_URL = 'https://script.google.com/macros/s/AKfycbyHm_zlCJGkVPKdNZ7sKCsjmBBnXORM1ydzLjrPl86etgnpVVlCbryoWs1_mR_mITyH/exec'; // <-- ADMIN: cole aqui a URL do Web App
+
+const ALL_TEAMS = [
+  {g:'A',c:'mx',n:'México'},{g:'A',c:'za',n:'África do Sul'},{g:'A',c:'kr',n:'Coreia do Sul'},{g:'A',c:'cz',n:'República Tcheca'},
+  {g:'B',c:'ca',n:'Canadá'},{g:'B',c:'ba',n:'Bósnia e Herzegovina'},{g:'B',c:'qa',n:'Catar'},{g:'B',c:'ch',n:'Suíça'},
+  {g:'C',c:'br',n:'Brasil'},{g:'C',c:'ma',n:'Marrocos'},{g:'C',c:'ht',n:'Haiti'},{g:'C',c:'gb-sct',n:'Escócia'},
+  {g:'D',c:'us',n:'Estados Unidos'},{g:'D',c:'py',n:'Paraguai'},{g:'D',c:'au',n:'Austrália'},{g:'D',c:'tr',n:'Turquia'},
+  {g:'E',c:'de',n:'Alemanha'},{g:'E',c:'cw',n:'Curaçao'},{g:'E',c:'ci',n:'Costa do Marfim'},{g:'E',c:'ec',n:'Equador'},
+  {g:'F',c:'nl',n:'Holanda'},{g:'F',c:'jp',n:'Japão'},{g:'F',c:'se',n:'Suécia'},{g:'F',c:'tn',n:'Tunísia'},
+  {g:'G',c:'be',n:'Bélgica'},{g:'G',c:'eg',n:'Egito'},{g:'G',c:'ir',n:'Irã'},{g:'G',c:'nz',n:'Nova Zelândia'},
+  {g:'H',c:'es',n:'Espanha'},{g:'H',c:'cv',n:'Cabo Verde'},{g:'H',c:'sa',n:'Arábia Saudita'},{g:'H',c:'uy',n:'Uruguai'},
+  {g:'I',c:'fr',n:'França'},{g:'I',c:'sn',n:'Senegal'},{g:'I',c:'iq',n:'Iraque'},{g:'I',c:'no',n:'Noruega'},
+  {g:'J',c:'ar',n:'Argentina'},{g:'J',c:'dz',n:'Argélia'},{g:'J',c:'at',n:'Áustria'},{g:'J',c:'jo',n:'Jordânia'},
+  {g:'K',c:'pt',n:'Portugal'},{g:'K',c:'cd',n:'RD Congo'},{g:'K',c:'uz',n:'Uzbequistão'},{g:'K',c:'co',n:'Colômbia'},
+  {g:'L',c:'gb-eng',n:'Inglaterra'},{g:'L',c:'hr',n:'Croácia'},{g:'L',c:'gh',n:'Gana'},{g:'L',c:'pa',n:'Panamá'}
+];
+
+const GROUPS = ['A','B','C','D','E','F','G','H','I','J','K','L'];
+
+function flagUrl(c){return 'https://flagcdn.com/24x18/'+c+'.png'}
+function getTime(nome){return ALL_TEAMS.find(t=>t.n===nome)}
+
+function timeHTML(nome,pos){
+  if(!nome) return '<span style="color:#555">—</span>';
+  const t=getTime(nome);
+  const flag=t?`<img class="flag-img" src="${flagUrl(t.c)}" onerror="this.style.display='none'" alt="">`:'';
+  const p=pos?`<span class="pos ${pos}">${pos.replace('pos','')}</span>`:'';
+  return flag+p+escapeHTML(nome);
+}
+
+function escapeHTML(s){
+  const d=document.createElement('div');
+  d.textContent=s;
+  return d.innerHTML;
+}
+
+// ============================================================
+let allData = [];
+let filtroAtual = 'todas';
+
+async function carregar(){
+  const content = document.getElementById('content');
+
+  if(!API_URL){
+    content.innerHTML=`<div class="erro"><p>API_URL nao configurada.</p><button onclick="carregar()">Tentar novamente</button></div>`;
+    return;
+  }
+
+  try{
+    const r=await fetch(API_URL+'?action=ranking');
+    const data=await r.json();
+
+    if(data.error){
+      content.innerHTML=`<div class="erro"><p>${escapeHTML(data.error)}</p><button onclick="carregar()">Tentar novamente</button></div>`;
+      return;
+    }
+
+    allData = data.linhas || [];
+    render();
+  }catch(err){
+    content.innerHTML=`<div class="erro"><p>Erro de conexao: ${escapeHTML(err.message)}</p><button onclick="carregar()">Tentar novamente</button></div>`;
+  }
+}
+
+function filtrar(f){
+  filtroAtual = f;
+  document.querySelectorAll('#filtros button').forEach(b=>{
+    b.classList.toggle('active',b.dataset.filtro===f);
+  });
+  render();
+}
+
+function render(){
+  const content = document.getElementById('content');
+
+  let linhas = allData;
+  if(filtroAtual!=='todas'){
+    linhas = linhas.filter(l=>{
+      const fase = l[2]||'';
+      return fase.trim()===filtroAtual.trim();
+    });
+  }
+
+  if(!linhas.length){
+    content.innerHTML=`<div class="empty"><div class="icon">📋</div><p>Nenhum palpite registrado ainda.</p></div>`;
+    return;
+  }
+
+  // Build table
+  // Headers depend on phase
+  const gruposCols = ['Grupo A','Grupo B','Grupo C','Grupo D','Grupo E','Grupo F','Grupo G','Grupo H','Grupo I','Grupo J','Grupo K','Grupo L'];
+  const mataCols = ['32 avos','Oitavas','Quartas','Semifinais','3º lugar','Final'];
+
+  let html = '<div class="table-wrap"><table>';
+
+  // Separate by phase
+  const gruposData = linhas.filter(l=>(l[2]||'').trim()==='grupos');
+  const mataData = linhas.filter(l=>(l[2]||'').trim()==='mata-mata');
+
+  if(gruposData.length){
+    html += `<tr><th>Usuário</th><th style="background:#162d50">Fase</th><th style="background:#162d50">Data</th>`;
+    GROUPS.forEach(g=>{
+      html+=`<th style="background:#162d50">Grupo ${g}</th>`;
+    });
+    html+=`</tr>`;
+
+    gruposData.forEach(l=>{
+      const usuario = l[0]||'';
+      const data = l[1]||'';
+      const payloadStr = l[3]||'{}';
+      let payload = {};
+      try{payload=JSON.parse(payloadStr)}catch(e){}
+
+      html+=`<tr><td>${escapeHTML(usuario)}</td><td><span class="fase-label fase-grupos">Grupos</span></td><td style="font-size:11px;color:var(--text-muted)">${new Date(data).toLocaleDateString('pt-BR')}</td>`;
+
+      GROUPS.forEach(g=>{
+        const p1=payload[g+'_1'];
+        const p2=payload[g+'_2'];
+        html+=`<td>${timeHTML(p1,'pos1')}<br>${timeHTML(p2,'pos2')}</td>`;
+      });
+    });
+  }
+
+  if(mataData.length){
+    html += `<tr><th>Usuário</th><th style="background:#162d50">Fase</th><th style="background:#162d50">Data</th>`;
+    const stages = ['32avos','16avos','quartas','semis','terceiro','final'];
+    const stageLabels = ['32 avos','Oitavas','Quartas','Semifinais','3º lugar','Final'];
+    stages.forEach((s,i)=>{
+      html+=`<th style="background:#162d50">${stageLabels[i]}</th>`;
+    });
+    html+=`</tr>`;
+
+    mataData.forEach(l=>{
+      const usuario = l[0]||'';
+      const data = l[1]||'';
+      const payloadStr = l[3]||'{}';
+      let payload = {};
+      try{payload=JSON.parse(payloadStr)}catch(e){}
+
+      html+=`<tr><td>${escapeHTML(usuario)}</td><td><span class="fase-label fase-mata">Mata-mata</span></td><td style="font-size:11px;color:var(--text-muted)">${new Date(data).toLocaleDateString('pt-BR')}</td>`;
+
+      stages.forEach(st=>{
+        const matches=Object.entries(payload).filter(([k])=>k.startsWith(st+'_'));
+        html+=`<td>`;
+        matches.forEach(([k,v],i)=>{
+          html+=timeHTML(v)+(i<matches.length-1?'<br>':'');
+        });
+        html+=`</td>`;
+      });
+
+      html+=`</tr>`;
+    });
+  }
+
+  html += '</table></div>';
+  content.innerHTML = html;
+}
+
+carregar();
+</script>
+</body>
+</html>
