@@ -21,22 +21,22 @@
   "terceiros_classificados": ["Bósnia e Herzegovina", "Paraguai", "Equador", "Suécia", "Senegal", "Argélia", "RD Congo", "Gana"],
   "mata_mata": {
     "32avos": [
-      { "jogo": 1, "time1": "África do Sul", "time2": "Canadá" },
-      { "jogo": 2, "time1": "Alemanha", "time2": "Paraguai" },
-      { "jogo": 3, "time1": "Holanda", "time2": "Marrocos" },
-      { "jogo": 4, "time1": "Brasil", "time2": "Japão" },
-      { "jogo": 5, "time1": "França", "time2": "Suécia" },
-      { "jogo": 6, "time1": "Costa do Marfim", "time2": "Noruega" },
-      { "jogo": 7, "time1": "México", "time2": "Equador" },
-      { "jogo": 8, "time1": "Inglaterra", "time2": "RD Congo" },
-      { "jogo": 9, "time1": "Bélgica", "time2": "Senegal" },
-      { "jogo": 10, "time1": "Estados Unidos", "time2": "Bósnia e Herzegovina" },
-      { "jogo": 11, "time1": "Espanha", "time2": "Áustria" },
-      { "jogo": 12, "time1": "Portugal", "time2": "Croácia" },
-      { "jogo": 13, "time1": "Suíça", "time2": "Argélia" },
-      { "jogo": 14, "time1": "Argentina", "time2": "Cabo Verde" },
-      { "jogo": 15, "time1": "Colômbia", "time2": "Gana" },
-      { "jogo": 16, "time1": "Austrália", "time2": "Egito" }
+      { "jogo": 1, "time1": "África do Sul", "time2": "Canadá", "vencedor": null },
+      { "jogo": 2, "time1": "Alemanha", "time2": "Paraguai", "vencedor": null },
+      { "jogo": 3, "time1": "Holanda", "time2": "Marrocos", "vencedor": null },
+      { "jogo": 4, "time1": "Brasil", "time2": "Japão", "vencedor": null },
+      { "jogo": 5, "time1": "França", "time2": "Suécia", "vencedor": null },
+      { "jogo": 6, "time1": "Costa do Marfim", "time2": "Noruega", "vencedor": null },
+      { "jogo": 7, "time1": "México", "time2": "Equador", "vencedor": null },
+      { "jogo": 8, "time1": "Inglaterra", "time2": "RD Congo", "vencedor": null },
+      { "jogo": 9, "time1": "Bélgica", "time2": "Senegal", "vencedor": null },
+      { "jogo": 10, "time1": "Estados Unidos", "time2": "Bósnia e Herzegovina", "vencedor": null },
+      { "jogo": 11, "time1": "Espanha", "time2": "Áustria", "vencedor": null },
+      { "jogo": 12, "time1": "Portugal", "time2": "Croácia", "vencedor": null },
+      { "jogo": 13, "time1": "Suíça", "time2": "Argélia", "vencedor": null },
+      { "jogo": 14, "time1": "Argentina", "time2": "Cabo Verde", "vencedor": null },
+      { "jogo": 15, "time1": "Colômbia", "time2": "Gana", "vencedor": null },
+      { "jogo": 16, "time1": "Austrália", "time2": "Egito", "vencedor": null }
     ]
   }
 }

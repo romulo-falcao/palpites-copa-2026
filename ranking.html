@@ -26,21 +26,70 @@ body{
   padding:16px;
   padding-bottom:40px
 }
-h1{font-size:22px;margin-bottom:4px}
-.sub{color:var(--text-muted);font-size:13px;margin-bottom:20px}
+h1{font-size:22px;margin-bottom:2px}
+.sub{color:var(--text-muted);font-size:13px;margin-bottom:16px}
 .empty{text-align:center;padding:40px 16px;color:var(--text-muted)}
 .empty .icon{font-size:48px;margin-bottom:12px}
 .spinner{width:32px;height:32px;border:3px solid rgba(255,255,255,.1);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:40px auto}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-.filtros{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.filtros{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
 .filtros button{
   padding:6px 14px;border-radius:6px;border:1px solid rgba(255,255,255,.15);
   background:transparent;color:var(--text-muted);font-size:12px;font-weight:600;
   cursor:pointer;font-family:var(--font);transition:all .2s
 }
 .filtros button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.filtros button.active-alt{background:var(--gold);color:#000;border-color:var(--gold)}
 
+.rank-list{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.rank-item{
+  background:var(--card);border-radius:var(--radius);padding:10px 12px;
+  border:1px solid rgba(255,255,255,.06);cursor:pointer;transition:all .2s
+}
+.rank-item:hover{border-color:rgba(255,255,255,.15)}
+.rank-item .rank-main{
+  display:flex;align-items:center;gap:10px
+}
+.rank-pos{
+  font-size:16px;font-weight:800;min-width:28px;text-align:center;
+  color:var(--text-muted)
+}
+.rank-1{color:var(--gold)}
+.rank-2{color:var(--silver)}
+.rank-3{color:var(--bronze)}
+.rank-name{flex:1;font-weight:600;font-size:14px}
+.rank-pts{
+  font-size:16px;font-weight:800;color:var(--accent)
+}
+.rank-breakdown{
+  font-size:11px;color:var(--text-muted);margin-top:4px;margin-left:38px
+}
+.rank-breakdown .b-grupos{color:#4ecdc4}
+.rank-breakdown .b-mata{color:var(--gold)}
+.rank-detail{
+  margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.06);
+  font-size:12px;display:none
+}
+.rank-detail.open{display:block}
+.rank-detail h4{
+  font-size:11px;font-weight:700;color:var(--text-muted);margin:6px 0 4px;
+  text-transform:uppercase;letter-spacing:.5px
+}
+.rank-detail .acerto{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:2px 6px;margin:2px;
+  background:rgba(46,204,113,.1);border-radius:4px;
+  font-size:11px;color:var(--accent);font-weight:500
+}
+.rank-detail .acerto .flag{width:14px;height:10px;border-radius:1px;vertical-align:middle}
+.rank-detail .nenhum{color:var(--text-muted);font-size:11px;font-style:italic}
+.rank-detail .pendente{color:var(--text-muted);font-size:10px;margin-top:2px}
+.rank-detail .erro{color:#e74c3c}
+.arrow{font-size:10px;color:var(--text-muted);transition:transform .2s}
+.arrow.open{transform:rotate(180deg)}
+
+/* table view (keeping existing style) */
 .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:16px}
 table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;min-width:500px}
 th{
@@ -76,16 +125,27 @@ tr:hover td:first-child{background:#1a2f4e}
   background:var(--accent);color:#fff;font-size:14px;font-weight:600;
   cursor:pointer;font-family:var(--font)
 }
+
+.legenda{
+  font-size:11px;color:var(--text-muted);padding:12px;border-top:1px solid rgba(255,255,255,.06);
+  margin-top:8px;line-height:1.6
+}
+.legenda strong{color:var(--text)}
 </style>
 </head>
 <body>
 
 <h1>🏆 Ranking de Palpites</h1>
-<div class="sub">Copa do Mundo 2026 — Compare os palpites do grupo</div>
+<div class="sub">Copa do Mundo 2026 — Quem está na frente</div>
 
-<div class="filtros" id="filtros">
-  <button class="active" data-filtro="todas" onclick="filtrar('todas')">Todas as fases</button>
-  <button data-filtro="grupos" onclick="filtrar('grupos')">Fase de Grupos</button>
+<div class="filtros" id="view-toggle">
+  <button class="active" data-view="ranking" onclick="toggleView('ranking')">⭐ Ranking</button>
+  <button data-view="tabela" onclick="toggleView('tabela')">📋 Tabela</button>
+</div>
+
+<div class="filtros" id="fase-filtro">
+  <button class="active" data-filtro="geral" onclick="filtrar('geral')">Geral</button>
+  <button data-filtro="grupos" onclick="filtrar('grupos')">Grupos</button>
   <button data-filtro="mata-mata" onclick="filtrar('mata-mata')">Mata-mata</button>
 </div>
 
@@ -93,11 +153,12 @@ tr:hover td:first-child{background:#1a2f4e}
   <div class="spinner"></div>
 </div>
 
+<script src="pontuacao.js"></script>
 <script>
 // ============================================================
 // CONFIG
 // ============================================================
-const API_URL = 'https://script.google.com/macros/s/AKfycbyHm_zlCJGkVPKdNZ7sKCsjmBBnXORM1ydzLjrPl86etgnpVVlCbryoWs1_mR_mITyH/exec'; // <-- ADMIN: cole aqui a URL do Web App
+const API_URL = 'https://script.google.com/macros/s/AKfycbyHm_zlCJGkVPKdNZ7sKCsjmBBnXORM1ydzLjrPl86etgnpVVlCbryoWs1_mR_mITyH/exec';
 
 const ALL_TEAMS = [
   {g:'A',c:'mx',n:'México'},{g:'A',c:'za',n:'África do Sul'},{g:'A',c:'kr',n:'Coreia do Sul'},{g:'A',c:'cz',n:'República Tcheca'},
@@ -134,9 +195,17 @@ function escapeHTML(s){
 }
 
 // ============================================================
+// STATE
+// ============================================================
 let allData = [];
-let filtroAtual = 'todas';
+let rankingData = [];
+let currentView = 'ranking';
+let currentFilter = 'geral';
+let resultadosCarregados = false;
 
+// ============================================================
+// MAIN
+// ============================================================
 async function carregar(){
   const content = document.getElementById('content');
 
@@ -146,8 +215,11 @@ async function carregar(){
   }
 
   try{
-    const r=await fetch(API_URL+'?action=ranking');
-    const data=await r.json();
+    const [apiRes, _resultados] = await Promise.all([
+      fetch(API_URL+'?action=ranking'),
+      PONTUACAO.carregarResultados()
+    ]);
+    const data = await apiRes.json();
 
     if(data.error){
       content.innerHTML=`<div class="erro"><p>${escapeHTML(data.error)}</p><button onclick="carregar()">Tentar novamente</button></div>`;
@@ -155,106 +227,282 @@ async function carregar(){
     }
 
     allData = data.linhas || [];
+    resultadosCarregados = true;
+    calcularRanking();
     render();
   }catch(err){
     content.innerHTML=`<div class="erro"><p>Erro de conexao: ${escapeHTML(err.message)}</p><button onclick="carregar()">Tentar novamente</button></div>`;
   }
 }
 
-function filtrar(f){
-  filtroAtual = f;
-  document.querySelectorAll('#filtros button').forEach(b=>{
-    b.classList.toggle('active',b.dataset.filtro===f);
+function calcularRanking(){
+  const usuariosMap = {};
+  allData.forEach(l => {
+    const nome = l[0];
+    const fase = (l[2] || '').trim();
+    if (!nome) return;
+    if (!usuariosMap[nome]) usuariosMap[nome] = {};
+    try {
+      usuariosMap[nome][fase] = JSON.parse(l[3] || '{}');
+    } catch(e) {
+      usuariosMap[nome][fase] = {};
+    }
+  });
+
+  rankingData = Object.entries(usuariosMap).map(([nome, palpites]) => {
+    const score = PONTUACAO.calcular(palpites);
+    return { nome, palpites, score };
+  });
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function render(){
+  if (currentView === 'ranking') renderRanking();
+  else renderTabela();
+}
+
+function toggleView(view){
+  currentView = view;
+  document.querySelectorAll('#view-toggle button').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === view);
   });
   render();
 }
 
-function render(){
+function filtrar(f){
+  currentFilter = f;
+  document.querySelectorAll('#fase-filtro button').forEach(b => {
+    b.classList.toggle('active', b.dataset.filtro === f);
+  });
+  render();
+}
+
+// ============================================================
+// RENDER: RANKING VIEW
+// ============================================================
+function renderRanking(){
   const content = document.getElementById('content');
 
-  let linhas = allData;
-  if(filtroAtual!=='todas'){
-    linhas = linhas.filter(l=>{
-      const fase = l[2]||'';
-      return fase.trim()===filtroAtual.trim();
-    });
-  }
-
-  if(!linhas.length){
+  if (!rankingData.length) {
     content.innerHTML=`<div class="empty"><div class="icon">📋</div><p>Nenhum palpite registrado ainda.</p></div>`;
     return;
   }
 
-  // Build table
-  // Headers depend on phase
+  // Sort by current filter
+  const ordenado = [...rankingData].sort((a, b) => {
+    if (currentFilter === 'grupos') return b.score.grupos.pts - a.score.grupos.pts;
+    if (currentFilter === 'mata-mata') return b.score.mataMata.pts - a.score.mataMata.pts;
+    return b.score.total - a.score.total;
+  });
+
+  let html = '<div class="rank-list">';
+
+  ordenado.forEach((item, i) => {
+    const pos = i + 1;
+    const posClass = pos <= 3 ? 'rank-' + pos : '';
+    const medal = pos === 1 ? '🥇' : pos === 2 ? '🥈' : pos === 3 ? '🥉' : '';
+
+    const score = item.score;
+
+    let pts = score.total;
+    let breakdown = '';
+    if (currentFilter === 'grupos') {
+      pts = score.grupos.pts;
+    } else if (currentFilter === 'mata-mata') {
+      pts = score.mataMata.pts;
+    }
+
+    const gruposStr = `<span class="b-grupos">grupos ${score.grupos.pts}</span>`;
+    const mataStr = `<span class="b-mata">mata ${score.mataMata.pts}</span>`;
+    breakdown = `${gruposStr} · ${mataStr}`;
+
+    html += `<div class="rank-item" onclick="toggleDetail(this)">
+      <div class="rank-main">
+        <div class="rank-pos ${posClass}">${medal || pos}</div>
+        <div class="rank-name">${escapeHTML(item.nome)}</div>
+        <div class="rank-pts">${pts}</div>
+        <div class="arrow">▼</div>
+      </div>
+      <div class="rank-breakdown">${breakdown}</div>
+      <div class="rank-detail">${montarDetalhe(item)}</div>
+    </div>`;
+  });
+
+  html += '</div>';
+
+  // Legend
+  html += `<div class="legenda">
+    <strong>Legenda:</strong><br>
+    🟢 Grupos — 1 pt por time que se classificou (máx 24 pts)<br>
+    🟡 Mata-mata — 1 pt por vencedor de jogo acertado (máx 32 pts)<br>
+    ⭐ <strong>Total: 56 pts</strong>
+  </div>`;
+
+  content.innerHTML = html;
+}
+
+function montarDetalhe(item){
+  let html = '';
+
+  // Groups detail
+  const g = item.score.grupos;
+  html += `<h4>Grupos (${g.pts}/${g.total})</h4>`;
+  if (g.pts === 0) {
+    html += `<div class="nenhum">Nenhum acerto</div>`;
+  } else {
+    const palpites = item.palpites.grupos || {};
+    const resultados = PONTUACAO.resultados.grupos;
+    for (const grp of GROUPS) {
+      if (!resultados || !resultados[grp]) continue;
+      const real = [resultados[grp].primeiro, resultados[grp].segundo];
+      const p1 = palpites[grp + '_1'];
+      const p2 = palpites[grp + '_2'];
+      [p1, p2].forEach((time, idx) => {
+        if (!time) return;
+        const acertou = real.includes(time);
+        const tObj = getTime(time);
+        const flag = tObj ? `<img class="flag" src="${flagUrl(tObj.c)}" onerror="this.style.display='none'" alt="">` : '';
+        if (acertou) {
+          html += `<span class="acerto">${flag}${escapeHTML(time)}</span>`;
+        }
+      });
+    }
+  }
+
+  // Mata-mata detail
+  const m = item.score.mataMata;
+  if (m.total > 0) {
+    html += `<h4>Mata-mata (${m.pts}/${m.total})`;
+    if (m.pendentes > 0) html += ` — ${m.pendentes} jogos pendentes`;
+    html += `</h4>`;
+    if (m.pts === 0 && m.pendentes === m.total) {
+      html += `<div class="nenhum">Aguardando resultados dos jogos</div>`;
+    } else if (m.pts === 0) {
+      html += `<div class="nenhum">Nenhum acerto</div>`;
+    } else {
+      const palpites = item.palpites['mata-mata'] || {};
+      const resultados = PONTUACAO.resultados.mata_mata;
+      if (resultados) {
+        for (const [fase, jogos] of Object.entries(resultados)) {
+          for (const jogo of jogos) {
+            const palpite = palpites[fase + '_' + jogo.jogo];
+            if (jogo.vencedor && palpite === jogo.vencedor) {
+              const tObj = getTime(palpite);
+              const flag = tObj ? `<img class="flag" src="${flagUrl(tObj.c)}" onerror="this.style.display='none'" alt="">` : '';
+              html += `<span class="acerto">${flag}${escapeHTML(palpite)} (${fase} #${jogo.jogo})</span>`;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return html;
+}
+
+function toggleDetail(el){
+  el.querySelector('.rank-detail').classList.toggle('open');
+  el.querySelector('.arrow').classList.toggle('open');
+}
+
+// ============================================================
+// RENDER: TABLE VIEW (existing)
+// ============================================================
+function renderTabela(){
+  const content = document.getElementById('content');
+
+  let linhas = allData;
+  if (currentFilter !== 'geral'){
+    linhas = linhas.filter(l => (l[2]||'').trim() === currentFilter.trim());
+  }
+
+  if (!linhas.length){
+    content.innerHTML=`<div class="empty"><div class="icon">📋</div><p>Nenhum palpite registrado ainda.</p></div>`;
+    return;
+  }
+
   const gruposCols = ['Grupo A','Grupo B','Grupo C','Grupo D','Grupo E','Grupo F','Grupo G','Grupo H','Grupo I','Grupo J','Grupo K','Grupo L'];
   const mataCols = ['32 avos','Oitavas','Quartas','Semifinais','3º lugar','Final'];
 
   let html = '<div class="table-wrap"><table>';
 
-  // Separate by phase
   const gruposData = linhas.filter(l=>(l[2]||'').trim()==='grupos');
   const mataData = linhas.filter(l=>(l[2]||'').trim()==='mata-mata');
 
   if(gruposData.length){
-    html += `<tr><th>Usuário</th><th style="background:#162d50">Fase</th><th style="background:#162d50">Data</th>`;
-    GROUPS.forEach(g=>{
-      html+=`<th style="background:#162d50">Grupo ${g}</th>`;
+    html += `<tr><th>Usuário</th><th style="background:#162d50">Pontos</th><th style="background:#162d50">Fase</th><th style="background:#162d50">Data</th>`;
+    GROUPS.forEach(g => {
+      html += `<th style="background:#162d50">Grupo ${g}</th>`;
     });
-    html+=`</tr>`;
+    html += `</tr>`;
 
-    gruposData.forEach(l=>{
+    gruposData.forEach(l => {
       const usuario = l[0]||'';
       const data = l[1]||'';
       const payloadStr = l[3]||'{}';
       let payload = {};
       try{payload=JSON.parse(payloadStr)}catch(e){}
 
-      html+=`<tr><td>${escapeHTML(usuario)}</td><td><span class="fase-label fase-grupos">Grupos</span></td><td style="font-size:11px;color:var(--text-muted)">${new Date(data).toLocaleDateString('pt-BR')}</td>`;
+      const pts = PONTUACAO.grupos(payload).pts;
 
-      GROUPS.forEach(g=>{
+      html += `<tr><td>${escapeHTML(usuario)}</td><td style="font-weight:700;color:var(--accent)">${pts}</td><td><span class="fase-label fase-grupos">Grupos</span></td><td style="font-size:11px;color:var(--text-muted)">${new Date(data).toLocaleDateString('pt-BR')}</td>`;
+
+      GROUPS.forEach(g => {
         const p1=payload[g+'_1'];
         const p2=payload[g+'_2'];
-        html+=`<td>${timeHTML(p1,'pos1')}<br>${timeHTML(p2,'pos2')}</td>`;
+        html += `<td>${timeHTML(p1,'pos1')}<br>${timeHTML(p2,'pos2')}</td>`;
       });
     });
   }
 
   if(mataData.length){
-    html += `<tr><th>Usuário</th><th style="background:#162d50">Fase</th><th style="background:#162d50">Data</th>`;
+    html += `<tr><th>Usuário</th><th style="background:#162d50">Pontos</th><th style="background:#162d50">Fase</th><th style="background:#162d50">Data</th>`;
     const stages = ['32avos','16avos','quartas','semis','terceiro','final'];
     const stageLabels = ['32 avos','Oitavas','Quartas','Semifinais','3º lugar','Final'];
-    stages.forEach((s,i)=>{
-      html+=`<th style="background:#162d50">${stageLabels[i]}</th>`;
+    stages.forEach((s,i) => {
+      html += `<th style="background:#162d50">${stageLabels[i]}</th>`;
     });
-    html+=`</tr>`;
+    html += `</tr>`;
 
-    mataData.forEach(l=>{
+    mataData.forEach(l => {
       const usuario = l[0]||'';
       const data = l[1]||'';
       const payloadStr = l[3]||'{}';
       let payload = {};
       try{payload=JSON.parse(payloadStr)}catch(e){}
 
-      html+=`<tr><td>${escapeHTML(usuario)}</td><td><span class="fase-label fase-mata">Mata-mata</span></td><td style="font-size:11px;color:var(--text-muted)">${new Date(data).toLocaleDateString('pt-BR')}</td>`;
+      const pts = PONTUACAO.mataMata(payload).pts;
 
-      stages.forEach(st=>{
-        const matches=Object.entries(payload).filter(([k])=>k.startsWith(st+'_'));
-        html+=`<td>`;
-        matches.forEach(([k,v],i)=>{
-          html+=timeHTML(v)+(i<matches.length-1?'<br>':'');
+      html += `<tr><td>${escapeHTML(usuario)}</td><td style="font-weight:700;color:var(--accent)">${pts}</td><td><span class="fase-label fase-mata">Mata-mata</span></td><td style="font-size:11px;color:var(--text-muted)">${new Date(data).toLocaleDateString('pt-BR')}</td>`;
+
+      stages.forEach(st => {
+        const matches = Object.entries(payload).filter(([k]) => k.startsWith(st+'_'));
+        html += `<td>`;
+        matches.forEach(([k,v],i) => {
+          html += timeHTML(v) + (i < matches.length-1 ? '<br>' : '');
         });
-        html+=`</td>`;
+        html += `</td>`;
       });
 
-      html+=`</tr>`;
+      html += `</tr>`;
     });
   }
 
   html += '</table></div>';
+
+  // Legend
+  html += `<div class="legenda">
+    <strong>Legenda:</strong> 🟢 1 pt por acerto · Grupos: máx 24 pts · Mata-mata: máx 32 pts · Total: 56 pts
+  </div>`;
+
   content.innerHTML = html;
 }
 
+// ============================================================
+// INIT
+// ============================================================
 carregar();
 </script>
 </body>
