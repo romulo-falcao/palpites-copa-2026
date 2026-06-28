@@ -1,6 +1,8 @@
 // ============================================================
 // pontuacao.js — Lógica de pontuação do bolão
-// Regra: 1 ponto por acerto (time classificado no grupo / vencedor no mata-mata)
+// Regra:
+//   Grupos: 1 pt por time classificado + 1 pt bônus se acertou a posição (1º/2º)
+//   Mata-mata: 1 pt por vencedor acertado
 // ============================================================
 
 const PONTUACAO = {
@@ -14,19 +16,22 @@ const PONTUACAO = {
   },
 
   grupos(payload) {
-    if (!this.resultados?.grupos || !payload) return { pts: 0, acertos: 0, total: 24 };
+    if (!this.resultados?.grupos || !payload) return { pts: 0, acertos: 0, total: 48 };
     let pts = 0;
     let acertos = 0;
     for (const g of 'ABCDEFGHIJKL') {
       const real = this.resultados.grupos[g];
       if (!real) continue;
-      const classificados = [real.primeiro, real.segundo];
       const p1 = payload[g + '_1'];
       const p2 = payload[g + '_2'];
-      if (p1 && classificados.includes(p1)) { pts++; acertos++; }
-      if (p2 && classificados.includes(p2)) { pts++; acertos++; }
+      // p1 = user's 1º pick
+      if (p1 === real.primeiro) { pts += 2; acertos++; }
+      else if (p1 === real.segundo) { pts += 1; acertos++; }
+      // p2 = user's 2º pick
+      if (p2 === real.segundo) { pts += 2; acertos++; }
+      else if (p2 === real.primeiro) { pts += 1; acertos++; }
     }
-    return { pts, acertos, total: 24 };
+    return { pts, acertos, total: 48 };
   },
 
   mataMata(payload) {

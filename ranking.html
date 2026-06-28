@@ -335,9 +335,9 @@ function renderRanking(){
   // Legend
   html += `<div class="legenda">
     <strong>Legenda:</strong><br>
-    🟢 Grupos — 1 pt por time que se classificou (máx 24 pts)<br>
-    🟡 Mata-mata — 1 pt por vencedor de jogo acertado (máx 32 pts)<br>
-    ⭐ <strong>Total: 56 pts</strong>
+    🟢 Grupos — 1 pt por classificado + 1 pt se acertou posição (1º/2º) (máx 48 pts)<br>
+    🟡 Mata-mata — 1 pt por vencedor acertado (máx 32 pts)<br>
+    ⭐ <strong>Total: 80 pts</strong>
   </div>`;
 
   content.innerHTML = html;
@@ -494,7 +494,7 @@ function renderTabela(){
 
   // Legend
   html += `<div class="legenda">
-    <strong>Legenda:</strong> 🟢 1 pt por acerto · Grupos: máx 24 pts · Mata-mata: máx 32 pts · Total: 56 pts
+    <strong>Legenda:</strong> 🟢 Grupos: 1 pt por classificado + 1 pt bônus por posição (máx 48 pts) · 🟡 Mata-mata: 1 pt por vencedor (máx 32 pts) · ⭐ Total: 80 pts
   </div>`;
 
   content.innerHTML = html;
