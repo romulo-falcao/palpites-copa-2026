@@ -2,41 +2,41 @@
   "meta": {
     "fase": "mata-mata",
     "atualizado_em": "2026-06-28",
-    "instrucao": "DADOS DE TESTE — substitua pelos resultados reais após 27/jun"
+    "instrucao": "DADOS REAIS — fase de grupos encerrada em 27/jun"
   },
   "grupos": {
     "A": { "primeiro": "México", "segundo": "África do Sul", "terceiro": "Coreia do Sul" },
-    "B": { "primeiro": "Canadá", "segundo": "Suíça", "terceiro": "Bósnia e Herzegovina" },
+    "B": { "primeiro": "Suíça", "segundo": "Canadá", "terceiro": "Bósnia e Herzegovina" },
     "C": { "primeiro": "Brasil", "segundo": "Marrocos", "terceiro": "Escócia" },
-    "D": { "primeiro": "Estados Unidos", "segundo": "Turquia", "terceiro": "Paraguai" },
-    "E": { "primeiro": "Alemanha", "segundo": "Equador", "terceiro": "Costa do Marfim" },
+    "D": { "primeiro": "Estados Unidos", "segundo": "Austrália", "terceiro": "Paraguai" },
+    "E": { "primeiro": "Alemanha", "segundo": "Costa do Marfim", "terceiro": "Equador" },
     "F": { "primeiro": "Holanda", "segundo": "Japão", "terceiro": "Suécia" },
     "G": { "primeiro": "Bélgica", "segundo": "Egito", "terceiro": "Irã" },
-    "H": { "primeiro": "Espanha", "segundo": "Uruguai", "terceiro": "Cabo Verde" },
-    "I": { "primeiro": "França", "segundo": "Senegal", "terceiro": "Noruega" },
+    "H": { "primeiro": "Espanha", "segundo": "Cabo Verde", "terceiro": "Uruguai" },
+    "I": { "primeiro": "França", "segundo": "Noruega", "terceiro": "Senegal" },
     "J": { "primeiro": "Argentina", "segundo": "Áustria", "terceiro": "Argélia" },
-    "K": { "primeiro": "Portugal", "segundo": "Colômbia", "terceiro": "RD Congo" },
+    "K": { "primeiro": "Colômbia", "segundo": "Portugal", "terceiro": "RD Congo" },
     "L": { "primeiro": "Inglaterra", "segundo": "Croácia", "terceiro": "Gana" }
   },
-  "terceiros_classificados": ["Coreia do Sul", "Bósnia e Herzegovina", "Escócia", "Paraguai", "Suécia", "Irã", "Cabo Verde", "Noruega"],
+  "terceiros_classificados": ["Bósnia e Herzegovina", "Paraguai", "Equador", "Suécia", "Senegal", "Argélia", "RD Congo", "Gana"],
   "mata_mata": {
     "32avos": [
-      { "jogo": 1, "time1": "México", "time2": "Bósnia e Herzegovina" },
-      { "jogo": 2, "time1": "Canadá", "time2": "Coreia do Sul" },
-      { "jogo": 3, "time1": "Brasil", "time2": "Paraguai" },
-      { "jogo": 4, "time1": "Estados Unidos", "time2": "Escócia" },
-      { "jogo": 5, "time1": "Alemanha", "time2": "Suécia" },
-      { "jogo": 6, "time1": "Holanda", "time2": "Costa do Marfim" },
-      { "jogo": 7, "time1": "Bélgica", "time2": "Irã" },
-      { "jogo": 8, "time1": "Espanha", "time2": "Cabo Verde" },
-      { "jogo": 9, "time1": "França", "time2": "Noruega" },
-      { "jogo": 10, "time1": "Argentina", "time2": "Argélia" },
-      { "jogo": 11, "time1": "Portugal", "time2": "RD Congo" },
-      { "jogo": 12, "time1": "Inglaterra", "time2": "Gana" },
-      { "jogo": 13, "time1": "África do Sul", "time2": "Suíça" },
-      { "jogo": 14, "time1": "Marrocos", "time2": "Turquia" },
-      { "jogo": 15, "time1": "Equador", "time2": "Japão" },
-      { "jogo": 16, "time1": "Egito", "time2": "Uruguai" }
+      { "jogo": 1, "time1": "África do Sul", "time2": "Canadá" },
+      { "jogo": 2, "time1": "Alemanha", "time2": "Paraguai" },
+      { "jogo": 3, "time1": "Holanda", "time2": "Marrocos" },
+      { "jogo": 4, "time1": "Brasil", "time2": "Japão" },
+      { "jogo": 5, "time1": "França", "time2": "Suécia" },
+      { "jogo": 6, "time1": "Costa do Marfim", "time2": "Noruega" },
+      { "jogo": 7, "time1": "México", "time2": "Equador" },
+      { "jogo": 8, "time1": "Inglaterra", "time2": "RD Congo" },
+      { "jogo": 9, "time1": "Bélgica", "time2": "Senegal" },
+      { "jogo": 10, "time1": "Estados Unidos", "time2": "Bósnia e Herzegovina" },
+      { "jogo": 11, "time1": "Espanha", "time2": "Áustria" },
+      { "jogo": 12, "time1": "Portugal", "time2": "Croácia" },
+      { "jogo": 13, "time1": "Suíça", "time2": "Argélia" },
+      { "jogo": 14, "time1": "Austrália", "time2": "Egito" },
+      { "jogo": 15, "time1": "Argentina", "time2": "Cabo Verde" },
+      { "jogo": 16, "time1": "Colômbia", "time2": "Gana" }
     ]
   }
 }
