@@ -951,30 +951,41 @@ function renderMataMata(){
 const MATCH_CONNECTIONS = {};
 
 function buildMatchConnections(){
-  // Round 32 -> Round 16
-  for(let i=1;i<=16;i+=2){
-    const r32a='32avos_'+i;
-    const r32b='32avos_'+(i+1);
-    const r16='16avos_'+Math.ceil(i/2);
-    MATCH_CONNECTIONS[r16]=[r32a,r32b];
-  }
-  // Round 16 -> Quarters
-  for(let i=1;i<=8;i+=2){
-    const r16a='16avos_'+i;
-    const r16b='16avos_'+(i+1);
-    const qf='quartas_'+Math.ceil(i/2);
-    MATCH_CONNECTIONS[qf]=[r16a,r16b];
-  }
+  // Round 32 -> Round 16 (FIFA bracket pairings)
+  // Match 89: W74(Germany/Paraguay) vs W77(France/Sweden)
+  MATCH_CONNECTIONS['16avos_1']=['32avos_2','32avos_5'];
+  // Match 90: W73(South Africa/Canada) vs W75(Netherlands/Morocco)
+  MATCH_CONNECTIONS['16avos_2']=['32avos_1','32avos_3'];
+  // Match 91: W76(Brazil/Japan) vs W78(Ivory Coast/Norway)
+  MATCH_CONNECTIONS['16avos_3']=['32avos_4','32avos_6'];
+  // Match 92: W79(Mexico/Ecuador) vs W80(England/DR Congo)
+  MATCH_CONNECTIONS['16avos_4']=['32avos_7','32avos_8'];
+  // Match 93: W83(Portugal/Croatia) vs W84(Spain/Austria)
+  MATCH_CONNECTIONS['16avos_5']=['32avos_11','32avos_12'];
+  // Match 94: W81(USA/Bosnia) vs W82(Belgium/Senegal)
+  MATCH_CONNECTIONS['16avos_6']=['32avos_9','32avos_10'];
+  // Match 95: W86(Argentina/Cape Verde) vs W88(Australia/Egypt)
+  MATCH_CONNECTIONS['16avos_7']=['32avos_14','32avos_16'];
+  // Match 96: W85(Switzerland/Algeria) vs W87(Colombia/Ghana)
+  MATCH_CONNECTIONS['16avos_8']=['32avos_13','32avos_15'];
+
+  // Round 16 -> Quarters (FIFA bracket)
+  // Match 97 (QF1): W89 vs W90
+  MATCH_CONNECTIONS['quartas_1']=['16avos_1','16avos_2'];
+  // Match 98 (QF2): W93 vs W94
+  MATCH_CONNECTIONS['quartas_2']=['16avos_5','16avos_6'];
+  // Match 99 (QF3): W91 vs W92
+  MATCH_CONNECTIONS['quartas_3']=['16avos_3','16avos_4'];
+  // Match 100 (QF4): W95 vs W96
+  MATCH_CONNECTIONS['quartas_4']=['16avos_7','16avos_8'];
+
   // Quarters -> Semis
-  for(let i=1;i<=4;i+=2){
-    const qfa='quartas_'+i;
-    const qfb='quartas_'+(i+1);
-    const sf='semis_'+Math.ceil(i/2);
-    MATCH_CONNECTIONS[sf]=[qfa,qfb];
-  }
+  MATCH_CONNECTIONS['semis_1']=['quartas_1','quartas_2'];
+  MATCH_CONNECTIONS['semis_2']=['quartas_3','quartas_4'];
+
   // Semis -> Final
   MATCH_CONNECTIONS['final_1']=['semis_1','semis_2'];
-  // Semis -> Third place (losers go to 3rd place match)
+  // Semis -> Third place (losers)
   MATCH_CONNECTIONS['terceiro_1']=['semis_1','semis_2'];
 }
 

@@ -34,9 +34,9 @@
       { "jogo": 11, "time1": "Espanha", "time2": "Áustria" },
       { "jogo": 12, "time1": "Portugal", "time2": "Croácia" },
       { "jogo": 13, "time1": "Suíça", "time2": "Argélia" },
-      { "jogo": 14, "time1": "Austrália", "time2": "Egito" },
-      { "jogo": 15, "time1": "Argentina", "time2": "Cabo Verde" },
-      { "jogo": 16, "time1": "Colômbia", "time2": "Gana" }
+      { "jogo": 14, "time1": "Argentina", "time2": "Cabo Verde" },
+      { "jogo": 15, "time1": "Colômbia", "time2": "Gana" },
+      { "jogo": 16, "time1": "Austrália", "time2": "Egito" }
     ]
   }
 }
